@@ -1,0 +1,18 @@
+{
+    "stitchings": [
+        {
+            "src": "../exports/example_top"
+        },
+        {
+            "src": "../exports/example_middle",
+            "img_fmt": "png"
+        },
+        {
+            "src": "../exports/example_bottom"
+        }
+    ],
+    "output": "../maps/my_stacked_example",
+    "out_fmt": "jpg",
+    "direction": "vertical",
+    "add_splitting_walls": true
+}
