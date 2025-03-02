@@ -2,6 +2,12 @@
 
 A collection of utilities for creating Foundry assets programmatically
 
+## Setup
+
+In order to use these scripts, you will need to set up your environment.
+
+It is recommended that you create a virtual environment for this purpose with [venv](https://docs.python.org/3/library/venv.html). You can then install the necessary packages with `pip install -r requirements.txt`.
+
 ## Stitchings
 
 To run the stitching tool, create the appropriate configuration,
@@ -12,7 +18,7 @@ and looking at the structure of the `Config` class.
 
 Once that is ready, run this command (replacing `CONFIG_FILE` with the path to your configuration file)
 
-```bash
+```sh
     python stitch.py -c CONFIG_FILE
 ```
 
