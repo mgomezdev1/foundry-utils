@@ -1,13 +1,15 @@
 import argparse
 import json
+from typing import Optional
 from pydantic import BaseModel, ValidationError
 
 from lib.stitchings.images import stitch_images
-from lib.stitchings.maps import stitch_data
+from lib.stitchings.maps import map_from_file, stitch_maps
 import os
 
 class Source(BaseModel):
     src: str
+    merge_from: Optional[str] = None
     img_fmt: str = "jpg"
 
 class Config(BaseModel):
@@ -38,14 +40,14 @@ def main():
             print(f"Config validation error: {e}")
 
     images = [f"{s.src}.{s.img_fmt}" for s in config.stitchings]
-    data = [f"{s.src}.json" for s in config.stitchings]
 
     output_dir = os.path.dirname(config.output)
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
     stitch_images(images, f"{config.output}.{config.out_fmt}", config.direction)
-    stitch_data(data, f"{config.output}.json", config.direction, config.add_splitting_walls)
+    map_data = [map_from_file(f"{s.src}.json", s.merge_from) for s in config.stitchings]
+    stitch_maps(map_data, config.direction, config.add_splitting_walls).export(f"{config.output}.json")
 
 if __name__ == "__main__":
     main()

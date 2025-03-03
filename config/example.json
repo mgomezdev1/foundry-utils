@@ -1,14 +1,15 @@
 {
     "stitchings": [
         {
-            "src": "../exports/example_top"
+            "src": "../foundry_maps/example_top",
+            "merge_from": "../foundry_exports/example_top.json"
         },
         {
-            "src": "../exports/example_middle",
+            "src": "../foundry_maps/example_middle",
             "img_fmt": "png"
         },
         {
-            "src": "../exports/example_bottom"
+            "src": "../foundry_maps/example_bottom"
         }
     ],
     "output": "../maps/my_stacked_example",
