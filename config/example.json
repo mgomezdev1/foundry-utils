@@ -13,6 +13,8 @@
         }
     ],
     "output": "../maps/my_stacked_example",
+    "foundry_maps_dir": "assets/media/maps/",
+    "name": "My Example Stitching",
     "out_fmt": "jpg",
     "direction": "vertical",
     "add_splitting_walls": true

@@ -19,6 +19,8 @@ class Config(BaseModel):
     add_splitting_walls: bool = True
     output: str = "./out/output"
     out_fmt: str = "jpg"
+    name: Optional[str] = None
+    foundry_dir: Optional[str] = None
 
 def main():
     parser = argparse.ArgumentParser(description="Stitch some maps together.")
@@ -45,9 +47,16 @@ def main():
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
 
-    stitch_images(images, f"{config.output}.{config.out_fmt}", config.direction)
+    img_output = f"{config.output}.{config.out_fmt}"
+    stitch_images(images, img_output, config.direction)
     map_data = [map_from_file(f"{s.src}.json", s.merge_from) for s in config.stitchings]
-    stitch_maps(map_data, config.direction, config.add_splitting_walls).export(f"{config.output}.json")
+    result = stitch_maps(map_data, config.direction, config.add_splitting_walls)
+    if config.name:
+        result.name = config.name
+    if config.foundry_dir:
+        foundry_path = os.path.join(config.foundry_dir, os.path.basename(img_output))
+        result.background.src = foundry_path
+    result.export(f"{config.output}.json")
 
 if __name__ == "__main__":
     main()

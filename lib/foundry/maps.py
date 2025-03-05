@@ -6,6 +6,19 @@ from lib.foundry.lights import FoundryLight
 from lib.foundry.walls import FoundryWall
 from lib.strings import process_keys_recursive, snake_to_camel
 
+class MapBackground(BaseModel):
+    src: Optional[str] = None
+    anchor_x: int = 0
+    anchor_y: int = 0
+    offset_x: int = 0
+    offset_y: int = 0
+    fit: str = "fill"
+    scale_x: float = 1
+    scale_y: float = 1
+    rotation: float = 0
+    tint: str = "#ffffff"
+    alpha_threshold: float = 0
+
 class FoundryMapData(BaseModel):
     name: str = "UnnamedMap"
     width: int = 0
@@ -22,6 +35,7 @@ class FoundryMapData(BaseModel):
     lights: "list[FoundryLight]" = []
     walls: "list[FoundryWall]" = []
     img: Optional[str] = None
+    background: MapBackground = MapBackground()
     foreground: Optional[str] = None
     extra: dict = {}
 
@@ -49,6 +63,7 @@ class FoundryMapData(BaseModel):
         copy = {**data}
         copy["lights"] = [FoundryLight.from_data(l) for l in copy.pop("lights", [])]
         copy["walls"] = [FoundryWall.from_data(w) for w in copy.pop("walls", [])]
+        copy["background"] = MapBackground(src=src) if (src := copy.pop("src",None)) else MapBackground(**bg) if (bg:=data.pop("background", None)) else MapBackground()
 
         extra = {}
         attributes = cls.model_fields
@@ -58,7 +73,9 @@ class FoundryMapData(BaseModel):
         copy["extra"] = extra
         print(extra)
 
-        return cls(**copy)
+        result = cls(**copy)
+        result.normalize()
+        return result
 
     def get_data(self):
         data = dict(self.model_dump(mode="json", exclude={"lights", "walls", "extra"}))
@@ -71,6 +88,12 @@ class FoundryMapData(BaseModel):
     def merge(self, other: "FoundryMapData"):
         # for now, merge does nothing
         return self
+
+    def normalize(self):
+        self.shift(self.shift_x, self.shift_y)
+        self.shift_x = self.shift_y = 0
+        self.shift(self.background.offset_x, self.background.offset_y)
+        self.background.offset_x = self.background.offset_y = 0
 
     def export(self, output_path: str):
         data = process_keys_recursive(self.get_data(), snake_to_camel)
